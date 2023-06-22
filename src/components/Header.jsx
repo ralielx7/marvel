@@ -1,11 +1,14 @@
-import { Box, Button, HStack, Image, Stack, Text, useColorMode } from "@chakra-ui/react";
+import { Box, Button, HStack, Image, Text, useColorMode } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs"
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 export default function Header() {
-    const [scroll, setScroll] = useState(true)
+    const [scroll, setScroll] = useState(true);
+    const [winScroll, setWinScroll] = useState(true);
+
+
     useEffect(() => {
         document.addEventListener("wheel", (event) =>  {
             if(event.deltaY < 0 ) {
@@ -15,20 +18,30 @@ export default function Header() {
                 //휠 스크롤 내림
                 setScroll(false)
             }
-        }
-        )
-    }) 
+
+            if (window.scrollY < 80) {
+                setWinScroll(true);
+            } else if (window.scrollY > 80) {
+                setWinScroll(false);
+            }
+        });
+    }); 
     const GNB = [
         {title: "home", href : "/"},
         {title: "characters", href : "/characters"},
         {title: "comics", href : "/comics"},
         {title: "events", href: "/events"}
     ]
+
+    const location = useLocation()
+    console.log(location.pathname)
+
     const { colorMode, toggleColorMode } = useColorMode();
-    return <Stack 
+    return (
+    <HStack 
     transform={scroll ? "translateY(0px)" : "translateY(-60px)"}
     transition={"0.4s"}
-    bg="gray.800"
+    bg={winScroll ? "transparent" : "gray.800"}
     w="full" 
     h="60px" 
     color="white" 
@@ -39,11 +52,13 @@ export default function Header() {
     boxShadow="sm"
     position="fixed"
     zIndex={99}
+    
     >
         <HStack
         justifyContent="space-between"
         w="7xl"
-        h="full"        
+        h="full"
+                
         >
             <HStack>
                 <Box w={24}>
@@ -53,8 +68,8 @@ export default function Header() {
                     {
                         GNB.map((item)=>(
                             <Link to={item.href} key={item.title} aria-label={item.title}>
-                                <Text>{item.title}</Text>
-                                </Link>
+                                <Text color={item.href === location.pathname ? "red.500" : ""}>{item.title}</Text>
+                            </Link>
                         ))
                     }
                         
@@ -68,5 +83,6 @@ export default function Header() {
                 
             </Button>
         </HStack>        
-    </Stack>
+    </HStack>
+    )
 }
