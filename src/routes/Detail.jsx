@@ -1,14 +1,17 @@
 import { Avatar, Box, Grid, GridItem, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-
+import { useLocation, useParams } from "react-router-dom";
 
 export default function Detail() { 
     const {id} = useParams()
+    const {search} = useLocation()
+    const paramData = search.split("=")
+
+    console.log(paramData[1])
 
     console.log(id)
-    const { data } = useQuery('comicsDetail', () =>
-    fetch(`https://gateway.marvel.com:443/v1/public/comics/${id}?apikey=f6d8099df8ef3c1516deabe291afc19f`).then(res =>
+    const { data } = useQuery(paramData[1], () =>
+    fetch(`https://gateway.marvel.com:443/v1/public/${paramData[1]}/${id}?apikey=f6d8099df8ef3c1516deabe291afc19f`).then(res =>
       res.json()
         )
     ) 
@@ -25,15 +28,16 @@ export default function Detail() {
             backgroundPosition="center"
             alignItems="center"
             position="relative"
+            
             >
                 <Box position="absolute" top="0" left="0" w="full" h="full" bg="rgba(0, 0, 0, 0.8)"
                 />
                 <HStack
-                    w="7xl" h="full" zIndex={99}
+                    w="7xl" h="full" zIndex={99} 
                 >
-                    <Grid templateColumns="350px 1fr">
+                    <Grid templateColumns="350px 1fr" gap="8" mt="32">
                         <GridItem>
-                            <Box w="full" h="550px" >
+                            <Box w="full" h="550px">
                                 <Image src={`${data?.data?.results[0].thumbnail.path}.${data?.data?.results[0].thumbnail.extension}`} alt="Detail Image"/>
                             </Box>
                         </GridItem>
@@ -45,7 +49,7 @@ export default function Detail() {
                             py="16"
                             >
                                 <Text color="white" fontWeight={600} fontSize="xl">
-                                    {data.data?.results[0].title} 
+                                    {data?.data?.results[0].title} 
                                 </Text>
                                 <Text color="white" fontSize="lg">
                                     {data?.data?.results[0].variantDescription}
