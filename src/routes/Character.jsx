@@ -6,6 +6,7 @@ import SkeletonListCharacter from "../components/SkeletonListCharacter";
 import Pagination from "react-js-pagination";
 import "./Paging.css";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import SkeletonPage from "../components/SkeletonPage";
 
 export default function Characters() {
     const [numLimit, setNumLimit] = useState(6);
@@ -49,7 +50,6 @@ export default function Characters() {
                     <Text>Characters</Text>
                 </Box>
                 {/* 로딩중일때 나옴 */}
-            {isLoading ? <SkeletonListCharacter/>: ""}
                 <Select w="32" onChange={handleChange}>
                     <option value="6">6</option>
                     <option value="12">12</option>
@@ -61,6 +61,8 @@ export default function Characters() {
             </HStack>
             {/* 게시판 */}
             <Grid templateColumns={"repeat(6, 1fr)"} w="full" gap="4">
+                {isLoading ?(
+                    <SkeletonPage height="300px" num={numLimit} column="6"/>): null}
                 {data?.data?.results.map((item, i)=> (
                     <GridItem w="220px" bg="red.500" role="group">
                     <VStack w="full">
